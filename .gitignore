@@ -1,0 +1,20 @@
+# Node / Vite
+node_modules/
+dist/
+*.local
+
+# Tauri / Rust
+src-tauri/target/
+src-tauri/gen/
+
+# Sistema
+*.log
+.DS_Store
+Thumbs.db
+
+# Scripts locais
+run-dev.bat
+run-build.bat
+
+# npm
+npm-debug.log*
