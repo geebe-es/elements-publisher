@@ -1,6 +1,7 @@
 import { Layers, Rocket, Sparkles, ArrowRight, Activity, BarChart3, CheckCircle2, CircleDot, FolderGit2 } from 'lucide-react';
 import type { ProjectWithStatus } from '../lib/types';
 import { ProjectCard } from '../components/ProjectCard';
+import rocketImg from '../assets/hero-rocket.png';
 
 export function Dashboard({
   items,
@@ -54,6 +55,21 @@ export function Dashboard({
       <div className="relative overflow-hidden rounded-2xl border border-accent-500/25 bg-dark-850/60 p-7 mb-6 shadow-card-glow">
         <div className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-accent-600/25 blur-3xl pointer-events-none" />
         <div className="absolute top-0 right-0 bottom-0 w-1/2 bg-[radial-gradient(ellipse_at_right,rgba(192,38,211,0.15),transparent_70%)] pointer-events-none" />
+        {/* Foguete da identidade (arte original), fundido à direita */}
+        <img
+          src={rocketImg}
+          alt=""
+          aria-hidden
+          className="absolute right-0 top-0 h-full w-[46%] object-cover object-[70%_center] pointer-events-none opacity-90"
+          style={{
+            maskImage:
+              'linear-gradient(to left, black 55%, transparent 96%), linear-gradient(to top, black 75%, transparent 100%)',
+            maskComposite: 'intersect',
+            WebkitMaskImage:
+              'linear-gradient(to left, black 55%, transparent 96%), linear-gradient(to top, black 75%, transparent 100%)',
+            WebkitMaskComposite: 'source-in',
+          }}
+        />
         <div className="relative">
           <h2 className="text-3xl font-bold text-white leading-tight">
             Bem-vindo ao{' '}

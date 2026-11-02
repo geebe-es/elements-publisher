@@ -28,7 +28,7 @@ export type PageId = (typeof NAV_ITEMS)[number]['id'];
 
 export function Sidebar({ active, onChange }: { active: PageId; onChange: (id: PageId) => void }) {
   return (
-    <aside className="w-60 shrink-0 h-screen border-r border-accent-700/25 bg-dark-900/70 backdrop-blur flex flex-col">
+    <aside className="w-60 shrink-0 h-full border-r border-accent-700/25 bg-dark-900/70 backdrop-blur flex flex-col">
       {/* Marca — logo + nome em gradiente (identidade visual) */}
       <div className="px-4 pt-5 pb-4">
         <div className="flex items-center gap-2.5">
@@ -69,7 +69,7 @@ export function Sidebar({ active, onChange }: { active: PageId; onChange: (id: P
           </div>
           <ChevronDown size={14} className="text-gray-500" />
         </div>
-        <p className="text-[10px] text-gray-600 text-center mt-2">v0.2.0 — Windows</p>
+        <p className="text-[10px] text-gray-600 text-center mt-2">v0.2.1 — Windows</p>
       </div>
     </aside>
   );

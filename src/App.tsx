@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { SetupWizard } from './components/SetupWizard';
 import { Sidebar, type PageId } from './components/Sidebar';
+import { TitleBar } from './components/TitleBar';
 import { Dashboard } from './pages/Dashboard';
 import { Projects } from './pages/Projects';
 import { Publish } from './pages/Publish';
@@ -25,6 +26,7 @@ function Placeholder({ page }: { page: PageId }) {
 function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
   const [page, setPage] = useState<PageId>('dashboard');
   const [items, setItems] = useState<ProjectWithStatus[]>([]);
+  const [ghUser, setGhUser] = useState('');
   const projects = items.map((i) => i.project);
 
   const load = useCallback(async () => {
@@ -57,12 +59,15 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
 
   useEffect(() => {
     load();
+    api.ghUser().then(setGhUser).catch(() => setGhUser(''));
   }, [load]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen rounded-xl border border-accent-700/30 overflow-hidden">
       <Sidebar active={page} onChange={setPage} />
-      <main className="flex-1 overflow-y-auto">
+      <div className="flex flex-col flex-1 min-w-0">
+        <TitleBar ghUser={ghUser} onSettings={() => setPage('settings')} />
+        <main className="flex-1 overflow-y-auto">
         {!gitIdentityOk && (
           <div className="mx-6 mt-4 bg-amber-400/10 border border-amber-400/30 text-amber-400 rounded-lg px-4 py-2 text-xs flex items-center gap-2">
             Identidade Git incompleta — configure nome e e-mail nas Configurações.
@@ -93,6 +98,7 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
           page !== 'settings' &&
           page !== 'logs' && <Placeholder page={page} />}
       </main>
+      </div>
     </div>
   );
 }
