@@ -2,24 +2,38 @@
 
 @layer base {
   body {
-    @apply bg-dark-950 text-gray-100 font-sans antialiased selection:bg-accent-500 selection:text-white;
-    background-color: #09090b;
+    @apply font-sans antialiased selection:bg-accent-500 selection:text-white;
+    /* Fundo noturno com brilhos roxos diagonais (identidade visual) */
+    background-color: #06030f;
     color: #f4f4f5;
+    background-image:
+      radial-gradient(ellipse 60% 45% at 8% -5%, rgba(124, 58, 237, 0.22), transparent 60%),
+      radial-gradient(ellipse 55% 40% at 100% 0%, rgba(192, 38, 211, 0.16), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 50% 110%, rgba(124, 58, 237, 0.10), transparent 60%);
+    background-attachment: fixed;
   }
 }
 
-/* Custom scrollbar for professional look */
+/* Texto em gradiente da marca (Elements / Publisher) */
+.brand-text {
+  background: linear-gradient(90deg, #a78bfa 0%, #e879f9 60%, #c026d3 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Scrollbar coerente com o tema */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #121216;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #2b2153;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #3d2f6d;
 }

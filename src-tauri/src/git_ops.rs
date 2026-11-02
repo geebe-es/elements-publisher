@@ -215,7 +215,7 @@ pub fn get_changes(path: String) -> ChangesResult {
 
             let x = entry.as_bytes()[0] as char;
             let y = entry.as_bytes()[1] as char;
-            let mut file_path = entry[3..].to_string();
+            let file_path = entry[3..].to_string();
             entries.next();
 
             let is_rename = x == 'R' || y == 'R';

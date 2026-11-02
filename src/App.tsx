@@ -60,7 +60,7 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
   }, [load]);
 
   return (
-    <div className="flex h-screen bg-dark-950">
+    <div className="flex h-screen">
       <Sidebar active={page} onChange={setPage} />
       <main className="flex-1 overflow-y-auto">
         {!gitIdentityOk && (
@@ -72,6 +72,7 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
           <Dashboard
             items={items}
             onPublishProject={() => setPage('publish')}
+            onGoProjects={() => setPage('projects')}
           />
         )}
         {page === 'projects' && <Projects items={items} onRefresh={load} />}
