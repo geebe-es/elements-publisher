@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { SetupWizard } from './components/SetupWizard';
 import { Sidebar, type PageId } from './components/Sidebar';
 import { TitleBar } from './components/TitleBar';
+import { UpdateBanner } from './components/UpdateBanner';
 import { Dashboard } from './pages/Dashboard';
 import { Projects } from './pages/Projects';
 import { Publish } from './pages/Publish';
@@ -71,6 +72,7 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
       <Sidebar active={page} onChange={setPage} />
       <div className="flex flex-col flex-1 min-w-0">
         <TitleBar ghUser={ghUser} onSettings={() => setPage('settings')} />
+        <UpdateBanner />
         <main className="flex-1 overflow-y-auto">
         {!gitIdentityOk && (
           <div className="mx-6 mt-4 bg-amber-400/10 border border-amber-400/30 text-amber-400 rounded-lg px-4 py-2 text-xs flex items-center gap-2">

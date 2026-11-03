@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Settings, User, Mail, CheckCircle, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { api } from '../lib/api';
 import { logger } from '../lib/logger';
+import { checkForUpdate } from '../lib/updater';
 import type { GitResult } from '../lib/git_types';
 
 export function SettingsPage() {
@@ -12,6 +13,8 @@ export function SettingsPage() {
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
   const [gitVersion, setGitVersion] = useState('');
   const [ghOk, setGhOk] = useState<boolean | null>(null);
+  const [updateChecking, setUpdateChecking] = useState(false);
+  const [updateFeedback, setUpdateFeedback] = useState<{ ok: boolean; text: string } | null>(null);
 
   const load = useCallback(async () => {
     const [n, e, v, gh] = await Promise.all([
@@ -53,6 +56,23 @@ export function SettingsPage() {
   };
 
   const invokeSet = (key: string, value: string) => api.setGitConfig(key, value);
+
+  const checkUpdate = async () => {
+    setUpdateChecking(true);
+    setUpdateFeedback(null);
+    try {
+      const found = await checkForUpdate();
+      if (found) {
+        setUpdateFeedback({ ok: false, text: `Nova versão v${found.version} disponível! Use o botão que apareceu no canto superior direito do app para instalar.` });
+      } else {
+        setUpdateFeedback({ ok: true, text: 'Você já está na versão mais recente.' });
+      }
+    } catch {
+      setUpdateFeedback({ ok: false, text: 'Falha ao consultar o GitHub (sem internet ou endpoint indisponível). Tente mais tarde.' });
+    } finally {
+      setUpdateChecking(false);
+    }
+  };
 
   return (
     <div className="p-6 max-w-2xl">
@@ -109,6 +129,33 @@ export function SettingsPage() {
             </a>
           )}
         </div>
+      </div>
+
+      {/* Atualizações */}
+      <div className="bg-dark-900 border border-dark-800 rounded-xl p-4 mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Atualizações do app</h3>
+            <p className="text-[11px] text-gray-600 mt-0.5">Verificação via GitHub Releases (geebe-es/elements-publisher)</p>
+          </div>
+          <button
+            onClick={checkUpdate}
+            className="flex items-center gap-1.5 text-xs text-white bg-accent-gradient rounded-lg px-3 py-2 font-medium shadow-accent-glow-sm hover:brightness-110"
+          >
+            <RefreshCw size={12} className={updateChecking ? 'animate-spin' : ''} /> Verificar agora
+          </button>
+        </div>
+        {updateFeedback && (
+          <div
+            className={`text-xs rounded-lg px-3 py-2 border ${
+              updateFeedback.ok
+                ? 'bg-emerald-400/10 border-emerald-400/30 text-emerald-400'
+                : 'bg-accent-500/10 border-accent-500/30 text-accent-400'
+            }`}
+          >
+            {updateFeedback.text}
+          </div>
+        )}
       </div>
 
       {/* Identidade */}
