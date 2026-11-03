@@ -86,7 +86,7 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
 
   return (
     <div
-      className={`flex h-screen overflow-hidden ${
+      className={`flex w-screen h-screen overflow-hidden ${
         isMax ? 'rounded-none border-0' : 'rounded-xl border border-accent-700/30'
       }`}
     >

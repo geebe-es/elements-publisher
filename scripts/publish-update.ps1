@@ -55,13 +55,14 @@ $latest = [ordered]@{
         }
     }
 }
+$latestPath = "$env:TEMP\latest.json"
 # Salva o latest.json sem BOM (necessário para o updater do Tauri não falhar)
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 [System.IO.File]::WriteAllText($latestPath, ($latest | ConvertTo-Json -Depth 5), $utf8NoBom)
 
 # Notas em arquivo (evita travar com aspas do PowerShell)
 $notesPath = "$env:TEMP\latest-notes.md"
-Set-Content -Path $notesPath -Value $Notes -Encoding UTF8
+[System.IO.File]::WriteAllText($notesPath, $Notes, $utf8NoBom)
 
 # 5. Cria a release com instalador + latest.json
 $url = & "C:\Program Files\GitHub CLI\gh.exe" release create $tag --repo $repo `
