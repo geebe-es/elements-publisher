@@ -55,8 +55,9 @@ $latest = [ordered]@{
         }
     }
 }
-$latestPath = "$env:TEMP\latest.json"
-$latest | ConvertTo-Json -Depth 5 | Set-Content -Path $latestPath -Encoding UTF8
+# Salva o latest.json sem BOM (necessário para o updater do Tauri não falhar)
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($latestPath, ($latest | ConvertTo-Json -Depth 5), $utf8NoBom)
 
 # Notas em arquivo (evita travar com aspas do PowerShell)
 $notesPath = "$env:TEMP\latest-notes.md"
