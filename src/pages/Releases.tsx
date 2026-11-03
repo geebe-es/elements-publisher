@@ -66,7 +66,7 @@ export function ReleasesPage({ projects }: { projects: Project[] }) {
             className={`text-xs px-3 py-2 rounded-lg border transition-colors ${
               selected === p.path
                 ? 'bg-accent-500/10 border-accent-500/50 text-accent-500 font-medium'
-                : 'bg-dark-900 border-dark-800 text-gray-400 hover:text-gray-200'
+                : 'bg-dark-850/70 border-dark-700/60 text-gray-400 hover:text-gray-200'
             }`}
           >
             {p.name}
@@ -91,7 +91,7 @@ export function ReleasesPage({ projects }: { projects: Project[] }) {
           )}
 
           {/* Criar tag */}
-          <div className="bg-dark-900 border border-dark-800 rounded-xl p-4 mb-4">
+          <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4 mb-4">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
               Criar versão (tag anotada + push da tag)
             </h3>
@@ -121,7 +121,7 @@ export function ReleasesPage({ projects }: { projects: Project[] }) {
                     setVersion('');
                   }
                 }}
-                className="flex items-center gap-1.5 text-xs font-medium text-white bg-accent-500 hover:bg-accent-600 disabled:opacity-40 rounded-lg px-4 transition-colors"
+                className="flex items-center gap-1.5 text-xs font-medium text-white bg-accent-gradient hover:brightness-110 disabled:opacity-40 rounded-lg px-4 transition-all"
               >
                 <Plus size={13} /> Criar tag e publicar
               </button>
@@ -139,7 +139,7 @@ export function ReleasesPage({ projects }: { projects: Project[] }) {
           </div>
 
           {/* Tags locais */}
-          <div className="bg-dark-900 border border-dark-800 rounded-xl p-4 mb-4">
+          <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4 mb-4">
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Tags locais</h3>
             {tags.length === 0 ? (
               <p className="text-xs text-gray-600">Nenhuma tag ainda.</p>
@@ -149,7 +149,7 @@ export function ReleasesPage({ projects }: { projects: Project[] }) {
                   <button
                     key={t}
                     onClick={() => run(() => api.pushTag(selected, t), `Tag "${t}" enviada ao GitHub.`)}
-                    className="flex items-center gap-1.5 text-xs bg-dark-800 border border-dark-700 rounded-lg px-3 py-1.5 text-gray-300 hover:text-white"
+                    className="flex items-center gap-1.5 text-xs bg-dark-850/70 border border-dark-700/60 rounded-lg px-3 py-1.5 text-gray-300 hover:text-white"
                     title="Enviar tag ao GitHub"
                   >
                     <Tag size={11} className="text-accent-500" /> {t}
@@ -161,7 +161,7 @@ export function ReleasesPage({ projects }: { projects: Project[] }) {
           </div>
 
           {/* Releases no GitHub */}
-          <div className="bg-dark-900 border border-dark-800 rounded-xl p-4">
+          <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Releases no GitHub</h3>
               <button

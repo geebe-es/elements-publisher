@@ -6,7 +6,7 @@ export function TitleBar({
   ghUser,
   onSettings,
 }: {
-  ghUser: string;
+  ghUser: string | null;
   onSettings: () => void;
 }) {
   const [maximized, setMaximized] = useState(false);
@@ -38,7 +38,15 @@ export function TitleBar({
     >
       {/* Esquerda: selo Conectado */}
       <div className="flex items-center gap-2 min-w-0" data-tauri-drag-region>
-        {ghUser ? (
+        {ghUser === null ? (
+          <div
+            className="flex items-center gap-1.5 text-xs text-gray-500 bg-dark-850/90 border border-dark-700/70 rounded-full px-3 py-1.5 animate-pulse"
+            title="Verificando conexão com GitHub..."
+          >
+            <Github size={12} />
+            Verificando...
+          </div>
+        ) : ghUser ? (
           <div
             className="flex items-center gap-1.5 text-xs text-gray-300 bg-dark-850/90 border border-dark-700/70 rounded-full px-3 py-1.5"
             title={`Conectado como ${ghUser}`}
@@ -87,7 +95,7 @@ export function TitleBar({
           title={maximized ? 'Restaurar' : 'Maximizar'}
           className="w-11 h-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-dark-800/80 transition-colors"
         >
-          <Square size={maximized ? 11 : 12} fill={maximized ? 'currentColor' : 'none'} />
+          <Square size={maximized ? 11 : 12} fill={maximized ? 'currentColor' : 'none'} strokeWidth={maximized ? 2 : 1.8} />
         </button>
         <button
           onClick={() => win.close()}

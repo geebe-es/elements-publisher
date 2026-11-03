@@ -42,7 +42,7 @@ export function HistoryPage({ projects }: { projects: Project[] }) {
             className={`text-xs px-3 py-2 rounded-lg border transition-colors ${
               selected === p.path
                 ? 'bg-accent-500/10 border-accent-500/50 text-accent-500 font-medium'
-                : 'bg-dark-900 border-dark-800 text-gray-400 hover:text-gray-200'
+                : 'bg-dark-850/70 border-dark-700/60 text-gray-400 hover:text-gray-200'
             }`}
           >
             {p.name}
@@ -57,7 +57,7 @@ export function HistoryPage({ projects }: { projects: Project[] }) {
       {loading && <p className="text-sm text-gray-400 py-8 text-center">Carregando histórico...</p>}
 
       {!loading && selected !== '' && (
-        <div className="bg-dark-900 border border-dark-800 rounded-xl divide-y divide-dark-800">
+        <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl divide-y divide-dark-800">
           {logs.length === 0 && (
             <p className="text-sm text-gray-500 py-8 text-center">Nenhum commit.</p>
           )}

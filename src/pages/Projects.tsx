@@ -36,7 +36,7 @@ export function Projects({
       </div>
 
       {items.length === 0 ? (
-        <div className="bg-dark-900 border border-dark-800 rounded-xl p-10 text-center">
+        <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-10 text-center">
           <Info size={20} className="text-gray-600 mx-auto mb-2" />
           <p className="text-sm text-gray-500">Nenhum projeto cadastrado.</p>
         </div>
@@ -47,7 +47,7 @@ export function Projects({
             return (
               <div
                 key={project.name}
-                className="bg-dark-900 border border-dark-800 rounded-xl p-4"
+                className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-9 h-9 rounded-lg bg-dark-800 border border-dark-700 flex items-center justify-center shrink-0">

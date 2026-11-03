@@ -326,7 +326,7 @@ export function Publish({ projects, onDone }: { projects: Project[]; onDone: () 
                   </div>
 
                   {diffFile && (
-                    <div className="bg-dark-900 border border-dark-800 rounded-xl p-4 mb-4">
+                    <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4 mb-4">
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-xs text-gray-400 font-mono">{diffFile}</p>
                         <button onClick={() => setDiffFile(null)} className="text-gray-500 hover:text-gray-300">

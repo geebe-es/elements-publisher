@@ -1,6 +1,20 @@
 use std::process::Command;
 use serde::{Serialize, Deserialize};
 
+// CREATE_NO_WINDOW: impede que cada chamada de git/gh/curl pisque uma janela de terminal
+#[cfg(windows)]
+fn new_cmd(program: &str) -> Command {
+    use std::os::windows::process::CommandExt;
+    let mut c = Command::new(program);
+    c.creation_flags(0x0800_0000);
+    c
+}
+
+#[cfg(not(windows))]
+fn new_cmd(program: &str) -> Command {
+    Command::new(program)
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct GitResult {
     pub success: bool,
@@ -11,7 +25,7 @@ pub struct GitResult {
 // Execução segura de comandos Git: executável fixo `git`, argumentos separados
 // (nunca concatenados em shell), sem execução de comandos arbitrários do frontend.
 pub fn run_git(args: Vec<&str>, cwd: &str) -> GitResult {
-    let output = Command::new("git")
+    let output = new_cmd("git")
         .args(&args)
         .current_dir(cwd)
         .output();
@@ -59,14 +73,14 @@ fn is_safe_rel_file(f: &str) -> bool {
 
 #[tauri::command]
 pub fn check_git_installation() -> bool {
-    let result = Command::new("git").arg("--version").output();
+    let result = new_cmd("git").arg("--version").output();
     result.is_ok()
 }
 
 /// Versão do Git instalado, ex.: "2.56.0"
 #[tauri::command]
 pub fn get_git_version() -> String {
-    let out = Command::new("git").arg("--version").output();
+    let out = new_cmd("git").arg("--version").output();
     match out {
         Ok(o) => String::from_utf8_lossy(&o.stdout)
             .replace("git version", "")
@@ -564,7 +578,7 @@ fn is_valid_tag_name(name: &str) -> bool {
 /// Verifica se o GitHub CLI está instalado e autenticado (`gh auth status`)
 #[tauri::command]
 pub fn gh_auth_status() -> GitResult {
-    let installed = Command::new("gh").arg("--version").output().is_ok();
+    let installed = new_cmd("gh").arg("--version").output().is_ok();
     if !installed {
         return GitResult {
             success: false,
@@ -572,7 +586,7 @@ pub fn gh_auth_status() -> GitResult {
             error: Some("GitHub CLI (gh) não está instalado. Baixe em https://cli.github.com — sem ele a autenticação é feita pelo Git Credential Manager durante o push (janelinha de login do GitHub na primeira vez).".to_string()),
         };
     }
-    let out = Command::new("gh").args(["auth", "status"]).output();
+    let out = new_cmd("gh").args(["auth", "status"]).output();
     match out {
         Ok(o) if o.status.success() => GitResult {
             success: true,
@@ -594,7 +608,7 @@ pub fn gh_auth_status() -> GitResult {
 /// Expõe o usuário autenticado no GitHub (se gh disponível)
 #[tauri::command]
 pub fn gh_user() -> String {
-    let out = Command::new("gh").args(["api", "user", "--jq", ".login"]).output();
+    let out = new_cmd("gh").args(["api", "user", "--jq", ".login"]).output();
     match out {
         Ok(o) if o.status.success() => String::from_utf8_lossy(&o.stdout).trim().to_string(),
         _ => String::new(),
@@ -642,7 +656,7 @@ pub fn set_remote_url(path: String, url: String) -> GitResult {
 
 #[tauri::command]
 pub fn check_gh_cli() -> bool {
-    Command::new("gh").arg("--version").output().is_ok()
+    new_cmd("gh").arg("--version").output().is_ok()
 }
 
 #[tauri::command]
@@ -652,7 +666,7 @@ pub fn gh_release_list(repo_url: String) -> GitResult {
         None => return GitResult { success: false, output: String::new(), error: Some("URL de repositório GitHub inválida.".to_string()) },
     };
     // Consulta pública: usa os releases visíveis do repositório
-    let out = Command::new("gh")
+    let out = new_cmd("gh")
         .args(["api", "-X", "GET", &format!("repos/{repo_slug}/releases?per_page=10")])
         .output();
     match out {
@@ -665,7 +679,7 @@ pub fn gh_release_list(repo_url: String) -> GitResult {
             let stderr = String::from_utf8_lossy(&o.stderr).to_string();
             // Fallback: se gh falhar (ex.: não autenticado), tenta consulta anônima via REST
             let url = format!("https://api.github.com/repos/{repo_slug}/releases?per_page=10");
-            let with_header = Command::new("curl")
+            let with_header = new_cmd("curl")
                 .args(["-s", "-H", "Accept: application/vnd.github+json", &url])
                 .output();
             match with_header {
@@ -716,7 +730,7 @@ pub fn gh_create_release(repo_url: String, tag: String, title: String, notes: St
         args.push(a.clone());
     }
     let arg_refs: Vec<&str> = args.iter().map(|s| s.as_str()).collect();
-    let out = Command::new("gh")
+    let out = new_cmd("gh")
         .args(&arg_refs)
         .output();
     match out {

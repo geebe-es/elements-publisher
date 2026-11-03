@@ -94,7 +94,7 @@ export function SettingsPage() {
       )}
 
       {/* Ambiente */}
-      <div className="bg-dark-900 border border-dark-800 rounded-xl p-4 mb-4 space-y-2.5">
+      <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4 mb-4 space-y-2.5">
         <div className="flex items-center justify-between">
           <span className="text-sm text-gray-300">Git instalado</span>
           {gitVersion ? (
@@ -132,7 +132,7 @@ export function SettingsPage() {
       </div>
 
       {/* Atualizações */}
-      <div className="bg-dark-900 border border-dark-800 rounded-xl p-4 mb-4">
+      <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4 mb-4">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Atualizações do app</h3>
@@ -159,7 +159,7 @@ export function SettingsPage() {
       </div>
 
       {/* Identidade */}
-      <div className="bg-dark-900 border border-dark-800 rounded-xl p-4">
+      <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Identidade Git (global)</h3>
           <button
@@ -184,7 +184,7 @@ export function SettingsPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={!loaded}
-                  className="w-full bg-dark-950 border border-dark-700 rounded-lg py-2 pl-10 pr-4 text-white text-sm focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 outline-none"
+                  className="w-full bg-dark-950 border border-dark-700 rounded-lg py-2 pl-10 pr-4 text-white text-sm focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 outline-none focus:ring-accent-glow-sm"
                 />
               </div>
             </div>
@@ -196,14 +196,14 @@ export function SettingsPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={!loaded}
-                  className="w-full bg-dark-950 border border-dark-700 rounded-lg py-2 pl-10 pr-4 text-white text-sm focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 outline-none"
+                  className="w-full bg-dark-950 border border-dark-700 rounded-lg py-2 pl-10 pr-4 text-white text-sm focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 outline-none focus:ring-accent-glow-sm"
                 />
               </div>
             </div>
             <button
               onClick={save}
               disabled={saving || !name.trim() || !email.trim()}
-              className="w-full py-2.5 bg-accent-500 hover:bg-accent-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-sm transition-all shadow-lg shadow-accent-glow"
+              className="w-full py-2.5 bg-accent-gradient hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg font-semibold text-sm transition-all shadow-lg shadow-accent-glow"
             >
               {saving ? 'Salvando...' : 'Salvar configuração global'}
             </button>

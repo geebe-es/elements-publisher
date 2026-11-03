@@ -27,7 +27,8 @@ function Placeholder({ page }: { page: PageId }) {
 function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
   const [page, setPage] = useState<PageId>('dashboard');
   const [items, setItems] = useState<ProjectWithStatus[]>([]);
-  const [ghUser, setGhUser] = useState('');
+  const [ghUser, setGhUser] = useState<string | null>(null);
+  const [isMax, setIsMax] = useState(false);
   const projects = items.map((i) => i.project);
 
   const load = useCallback(async () => {
@@ -67,8 +68,28 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
     return () => clearTimeout(t);
   }, [load]);
 
+  // Estado maximizado (para remover bordas arredondadas em tela cheia)
+  useEffect(() => {
+    let mounted = true;
+    import('@tauri-apps/api/window').then((m) => {
+      const win = m.getCurrentWindow();
+      win.isMaximized().then((mx) => mounted && setIsMax(mx)).catch(() => {});
+      const un = win.onResized(async () => {
+        try {
+          setIsMax(await win.isMaximized());
+        } catch { /* ignora */ }
+      });
+      un.then((f) => f()).catch(() => {});
+    }).catch(() => {});
+    return () => { mounted = false; };
+  }, []);
+
   return (
-    <div className="flex h-screen rounded-xl border border-accent-700/30 overflow-hidden">
+    <div
+      className={`flex h-screen overflow-hidden ${
+        isMax ? 'rounded-none border-0' : 'rounded-xl border border-accent-700/30'
+      }`}
+    >
       <Sidebar active={page} onChange={setPage} />
       <div className="flex flex-col flex-1 min-w-0">
         <TitleBar ghUser={ghUser} onSettings={() => setPage('settings')} />

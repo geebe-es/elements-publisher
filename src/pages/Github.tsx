@@ -94,7 +94,7 @@ export function GithubPage({ projects }: { projects: Project[] }) {
         </div>
       )}
 
-      <div className="bg-dark-900 border border-dark-800 rounded-xl p-4 mb-4">
+      <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4 mb-4">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Status da conta</h3>
           <button
@@ -147,11 +147,11 @@ export function GithubPage({ projects }: { projects: Project[] }) {
       </div>
 
       {/* Remotes dos projetos */}
-      <div className="bg-dark-900 border border-dark-800 rounded-xl p-4">
+      <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4">
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Repositórios conectados</h3>
         <div className="space-y-2">
           {projects.map((p) => (
-            <div key={p.path} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-dark-850 border border-dark-800">
+            <div key={p.path} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-dark-850/70 border border-dark-700/60">
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-200">{p.name}</p>
                 <p className="text-[11px] text-gray-500 truncate flex items-center gap-1">
@@ -160,7 +160,7 @@ export function GithubPage({ projects }: { projects: Project[] }) {
               </div>
               <button
                 onClick={() => validate(p)}
-                className="text-[11px] text-gray-400 hover:text-emerald-400 bg-dark-800 border border-dark-700 rounded-lg px-2.5 py-1.5"
+                className="text-[11px] text-gray-400 hover:text-emerald-400 bg-dark-850/70 border border-dark-700/60 rounded-lg px-2.5 py-1.5"
               >
                 Validar
               </button>
@@ -176,7 +176,7 @@ export function GithubPage({ projects }: { projects: Project[] }) {
                   setEditProject(p);
                   setNewUrl(p.repo_url);
                 }}
-                className="text-[11px] text-gray-400 hover:text-accent-500 bg-dark-800 border border-dark-700 rounded-lg px-2.5 py-1.5"
+                className="text-[11px] text-gray-400 hover:text-accent-500 bg-dark-850/70 border border-dark-700/60 rounded-lg px-2.5 py-1.5"
               >
                 Alterar URL
               </button>
@@ -189,7 +189,7 @@ export function GithubPage({ projects }: { projects: Project[] }) {
       </div>
 
       {editProject && (
-        <div className="mt-4 bg-dark-900 border border-accent-500/40 rounded-xl p-4">
+        <div className="mt-4 bg-dark-850/70 border border-accent-500/40 rounded-2xl p-4">
           <h3 className="text-sm font-semibold text-white mb-3">
             Alterar remote de {editProject.name}
           </h3>
@@ -197,18 +197,18 @@ export function GithubPage({ projects }: { projects: Project[] }) {
             <input
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}
-              className="flex-1 bg-dark-950 border border-dark-700 rounded-lg py-2 px-3 text-white text-sm focus:ring-2 focus:ring-accent-500/50 outline-none"
+              className="w-full bg-dark-950 border border-dark-700 rounded-lg py-2 px-3 text-white text-sm focus:ring-2 focus:ring-accent-500/50 outline-none focus:ring-accent-glow-sm"
               placeholder="https://github.com/geebe-es/..."
             />
             <button
               onClick={saveUrl}
-              className="text-sm font-medium text-white bg-accent-500 hover:bg-accent-600 rounded-lg px-4"
+              className="text-sm font-medium text-white bg-accent-gradient hover:brightness-110 rounded-lg px-4"
             >
               Salvar
             </button>
             <button
               onClick={() => setEditProject(null)}
-              className="text-sm text-gray-400 bg-dark-800 border border-dark-700 rounded-lg px-3"
+              className="text-sm text-gray-400 bg-dark-850/70 border border-dark-700/60 rounded-lg px-3"
             >
               Cancelar
             </button>

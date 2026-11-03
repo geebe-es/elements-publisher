@@ -103,7 +103,7 @@ export function Dashboard({
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
         {items.length === 0 ? (
           <div className="col-span-3 bg-dark-850/70 border border-dark-700/60 rounded-2xl p-10 text-center">
             <Sparkles size={20} className="text-accent-400 mx-auto mb-2" />

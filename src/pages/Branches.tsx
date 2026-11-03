@@ -50,7 +50,7 @@ export function BranchesPage({ projects }: { projects: Project[] }) {
             className={`text-xs px-3 py-2 rounded-lg border transition-colors ${
               selected === p.path
                 ? 'bg-accent-500/10 border-accent-500/50 text-accent-500 font-medium'
-                : 'bg-dark-900 border-dark-800 text-gray-400 hover:text-gray-200'
+                : 'bg-dark-850/70 border-dark-700/60 text-gray-400 hover:text-gray-200'
             }`}
           >
             {p.name}
@@ -65,19 +65,19 @@ export function BranchesPage({ projects }: { projects: Project[] }) {
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => load(selected)}
-              className="flex items-center gap-1.5 text-xs text-gray-400 bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 hover:text-gray-200"
+              className="flex items-center gap-1.5 text-xs text-gray-400 bg-dark-850/70 border border-dark-700/60 rounded-lg px-3 py-2 hover:text-gray-200"
             >
               <RefreshCw size={13} /> Atualizar
             </button>
             <button
               onClick={() => act(() => api.fetch(selected), 'Referências remotas atualizadas (git fetch --all).')}
-              className="flex items-center gap-1.5 text-xs text-gray-400 bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 hover:text-gray-200"
+              className="flex items-center gap-1.5 text-xs text-gray-400 bg-dark-850/70 border border-dark-700/60 rounded-lg px-3 py-2 hover:text-gray-200"
             >
               <CloudDownload size={13} /> git fetch
             </button>
             <button
               onClick={() => act(() => api.push(selected, data?.current ?? ''), 'Push da branch atual enviado.')}
-              className="flex items-center gap-1.5 text-xs text-gray-400 bg-dark-800 border border-dark-700 rounded-lg px-3 py-2 hover:text-gray-200"
+              className="flex items-center gap-1.5 text-xs text-gray-400 bg-dark-850/70 border border-dark-700/60 rounded-lg px-3 py-2 hover:text-gray-200"
             >
               <CloudUpload size={13} /> Push da atual
             </button>
@@ -108,7 +108,7 @@ export function BranchesPage({ projects }: { projects: Project[] }) {
                 act(() => api.createBranch(selected, newName.trim()), `Branch "${newName.trim()}" criada e ativada.`);
                 setNewName('');
               }}
-              className="flex items-center gap-1.5 text-xs font-medium text-white bg-accent-500 hover:bg-accent-600 rounded-lg px-4 transition-colors"
+              className="flex items-center gap-1.5 text-xs font-medium text-white bg-accent-gradient hover:brightness-110 rounded-lg px-4 transition-all"
             >
               <Plus size={13} /> Criar
             </button>
@@ -118,7 +118,7 @@ export function BranchesPage({ projects }: { projects: Project[] }) {
 
           {!loading && data && (
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-dark-900 border border-dark-800 rounded-xl p-4">
+              <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Locais</h3>
                 <div className="space-y-1">
                   {data.local.map((b) => (
@@ -137,7 +137,7 @@ export function BranchesPage({ projects }: { projects: Project[] }) {
                   ))}
                 </div>
               </div>
-              <div className="bg-dark-900 border border-dark-800 rounded-xl p-4">
+              <div className="bg-dark-850/70 border border-dark-700/60 rounded-2xl p-4">
                 <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Remotas (origin)</h3>
                 <div className="space-y-1">
                   {data.remote.length === 0 && (
