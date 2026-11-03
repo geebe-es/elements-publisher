@@ -5,10 +5,43 @@
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Elements Publisher</title>
+    <!-- Splash instantâneo: remove a tela branca durante o boot do WebView2 -->
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #06030f;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Inter, system-ui, sans-serif;
+      }
+      .splash-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #8b5cf6, #c026d3);
+        animation: pulse 1.1s ease-in-out infinite;
+        box-shadow: 0 0 18px rgba(139, 92, 246, 0.5);
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(0.8); opacity: 0.55; }
+        50% { transform: scale(1.15); opacity: 1; }
+      }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 18px;">
+        <div class="splash-dot"></div>
+        <p style="margin: 0; font-size: 12px; letter-spacing: 0.2em; color: #6b5a9e; text-transform: uppercase;">
+          Elements Publisher
+        </p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

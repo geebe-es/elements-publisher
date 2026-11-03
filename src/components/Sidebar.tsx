@@ -69,7 +69,7 @@ export function Sidebar({ active, onChange }: { active: PageId; onChange: (id: P
           </div>
           <ChevronDown size={14} className="text-gray-500" />
         </div>
-        <p className="text-[10px] text-gray-600 text-center mt-2">v0.2.1 — Windows</p>
+        <p className="text-[10px] text-gray-600 text-center mt-2">v0.2.2 — Windows</p>
       </div>
     </aside>
   );

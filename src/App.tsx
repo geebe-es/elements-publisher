@@ -59,7 +59,11 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
 
   useEffect(() => {
     load();
-    api.ghUser().then(setGhUser).catch(() => setGhUser(''));
+    // O usuário do GitHub não é crítico para a primeira pintura — carrega depois
+    const t = setTimeout(() => {
+      api.ghUser().then(setGhUser).catch(() => setGhUser(''));
+    }, 1500);
+    return () => clearTimeout(t);
   }, [load]);
 
   return (

@@ -10,9 +10,7 @@
       radial-gradient(ellipse 60% 45% at 8% -5%, rgba(124, 58, 237, 0.22), transparent 60%),
       radial-gradient(ellipse 55% 40% at 100% 0%, rgba(192, 38, 211, 0.16), transparent 55%),
       radial-gradient(ellipse 70% 50% at 50% 110%, rgba(124, 58, 237, 0.10), transparent 60%);
-    background-attachment: fixed;
-  }
-}
+  }}
 
 /* Texto em gradiente da marca (Elements / Publisher) */
 .brand-text {
