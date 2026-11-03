@@ -4,7 +4,12 @@
 
 **Central de gerenciamento de projetos locais e publicações no GitHub — sem usar comandos Git no terminal.**
 
-Tauri 2 · React 19 · TypeScript · Rust · Tailwind CSS
+Tauri 2 · Electron 45 · React 19 · TypeScript · Rust · Node.js · Tailwind CSS
+
+> **v0.5.0 — migração para Electron.** O app agora roda em Electron + Node.js,
+> mantendo o frontend e todo o fluxo Git/GitHub. A implementação Tauri original
+> foi preservada em `src-tauri/` e continua compilando. Veja
+> [`docs/migracao-electron.md`](docs/migracao-electron.md).
 
 </div>
 
@@ -27,8 +32,8 @@ O **Elements Publisher** é um aplicativo desktop para Windows que centraliza o 
 
 ## Segurança por design
 
-- O frontend **nunca** envia comandos de shell arbitrários: cada operação é um comando Tauri tipado que chama o executável `git` com **argumentos separados e validados**.
-- URLs, caminhos, nomes de branch e de tag são validados no backend Rust.
+- O frontend **nunca** envia comandos de shell arbitrários: cada operação é um comando tipado que chama o executável `git` com **argumentos separados e validados** (Electron: IPC + whitelist; Tauri: comandos Rust).
+- URLs, caminhos, nomes de branch e de tag são validados no backend (Node.js ou Rust).
 - Nenhuma senha ou token é solicitado ou armazenado pelo app. A autenticação usa:
   - **Git Credential Manager** do Windows (nativo, no primeiro push), ou
   - **GitHub CLI** (`gh`), opcional, para recursos avançados (Releases com anexos).
@@ -52,31 +57,50 @@ Os projetos são cadastrados em *Meus Projetos*: caminho local + URL do reposit�
 
 ## Para desenvolvedores — rodar e compilar
 
+### Electron (versão atual)
+
 ```powershell
 # 1. Dependências
 npm install
 
-# 2. Desenvolvimento (requer Rust/Cargo no PATH)
+# 2. Desenvolvimento (HMR)
+npm run dev:electron
+
+# 3. Instalador Windows (NSIS) — saída em release\
+npm run build:win
+```
+
+### Tauri (legado preservado)
+
+```powershell
+# Desenvolvimento (requer Rust/Cargo no PATH)
 .\run-dev.bat        # ou: $env:Path += ";$env:USERPROFILE\.cargo\bin"; npm.cmd run tauri dev
 
-# 3. Gerar instalador Windows (NSIS)
+# Instalador Windows (NSIS)
 .\run-build.bat      # saída em src-tauri\target\release\bundle\nsis\
 ```
 
 ## Estrutura
 
 ```
+├── electron/               # Backend Electron (Node.js) — versão 0.5.0
+│   ├── main/
+│   │   ├── index.ts        # janela, CSP, controles, bootstrap
+│   │   └── services/       # git, projects, system, updater
+│   └── preload/index.ts    # contextBridge + whitelist IPC
 ├── src/                    # Frontend React + TypeScript + Tailwind
 │   ├── components/         # Sidebar, SetupWizard, ProjectCard
 │   ├── pages/              # Dashboard, Projects, Publish, History,
 │   │                       # Branches, Releases, Github, Settings, Logs
-│   └── lib/                # api (comandos Tauri), logger, tipos
-├── src-tauri/              # Backend Rust (Tauri 2)
+│   └── lib/                # api (Electron/Tauri), logger, tipos
+├── src-tauri/              # Backend Rust (Tauri 2) — legado preservado
 │   └── src/
 │       ├── git_ops.rs      # Operações Git + GitHub CLI (validadas)
 │       ├── project_store.rs# Persistência local dos projetos (JSON)
 │       └── lib.rs          # Registro dos comandos
-└── docs/                   # Documentação de uso
+├── electron.vite.config.ts # Build main/preload/renderer
+├── electron-builder.yml    # Instalador NSIS + provider GitHub
+└── docs/                   # Documentação de uso e migração
 ```
 
 ## Performance
@@ -87,4 +111,4 @@ npm install
 
 ---
 
-*Elements Publisher — v0.1.0*
+*Elements Publisher — v0.5.0 · Electron*

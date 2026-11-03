@@ -1,0 +1,41 @@
+appId: com.gabri.elements-publisher
+productName: Elements Publisher
+copyright: Copyright © 2026 Gabriel Rodrigues
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - out/**/*
+  - package.json
+
+asar: true
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: src-tauri/icons/icon.ico
+  artifactName: Elements-Publisher-${version}-setup.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Elements Publisher
+  installerLanguages:
+    - pt_BR
+    - en_US
+  language: "1046"
+  displayLanguageSelector: false
+  deleteAppDataOnUninstall: false
+
+publish:
+  provider: github
+  owner: geebe-es
+  repo: elements-publisher

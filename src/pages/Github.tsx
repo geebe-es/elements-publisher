@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Github, Loader2, CheckCircle2, XCircle, RefreshCw, ExternalLink, Link2 } from 'lucide-react';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { openExternal } from '../lib/openExternal';
 import { api } from '../lib/api';
 import { logger } from '../lib/logger';
 import type { Project } from '../lib/types';
@@ -165,7 +165,7 @@ export function GithubPage({ projects }: { projects: Project[] }) {
                 Validar
               </button>
               <button
-                onClick={() => openUrl(p.repo_url.replace(/\.git$/, ''))}
+                onClick={() => openExternal(p.repo_url.replace(/\.git$/, ''))}
                 className="text-gray-500 hover:text-gray-300"
                 title="Abrir no GitHub"
               >

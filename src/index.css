@@ -35,3 +35,14 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #3d2f6d;
 }
+
+/* Electron: região de arraste da janela sem moldura */
+.electron-drag {
+  -webkit-app-region: drag;
+}
+.electron-drag button,
+.electron-drag a,
+.electron-drag input,
+.electron-drag [role='button'] {
+  -webkit-app-region: no-drag;
+}

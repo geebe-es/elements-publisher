@@ -1,5 +1,10 @@
 # Documentação Técnica — Elements Publisher
 
+> **Nota (v0.5.0):** esta página descreve o backend Tauri/Rust legado. A versão
+> atual roda em Electron + Node.js; consulte
+> [`migracao-electron.md`](migracao-electron.md) para a arquitetura, IPC,
+> segurança, build e atualizações do Electron.
+
 ## Arquitetura
 
 ```

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Tag, Plus, CloudUpload, Loader2, ExternalLink, Info } from 'lucide-react';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { openExternal } from '../lib/openExternal';
 import { api, type ReleaseInfo } from '../lib/api';
 import type { Project } from '../lib/types';
 import type { GitResult } from '../lib/git_types';
@@ -201,7 +201,7 @@ export function ReleasesPage({ projects }: { projects: Project[] }) {
                 {releases.map((r) => (
                   <button
                     key={r.html_url}
-                    onClick={() => openUrl(r.html_url)}
+                    onClick={() => openExternal(r.html_url)}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left hover:bg-dark-800 transition-colors"
                   >
                     <Tag size={12} className="text-accent-500 shrink-0" />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { invoke } from '@tauri-apps/api/core';
 import { Terminal, User, Mail, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { api } from '../lib/api';
 
 interface CheckItem {
   label: string;
@@ -18,11 +18,11 @@ export function SetupWizard() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    invoke<boolean>('check_git_installation').then(setGitInstalled);
+    api.checkGitInstallation().then(setGitInstalled);
     // Lê configurações existentes (não sobrescreve sem autorização)
     Promise.all([
-      invoke<string>('get_git_config', { key: 'user.name', global: true }).catch(() => ''),
-      invoke<string>('get_git_config', { key: 'user.email', global: true }).catch(() => ''),
+      api.getGitConfig('user.name').catch(() => ''),
+      api.getGitConfig('user.email').catch(() => ''),
     ]).then(([name, email]) => {
       setCurrentName(name);
       setCurrentEmail(email);
@@ -37,16 +37,8 @@ export function SetupWizard() {
     if (!userName.trim() || !userEmail.trim()) return;
     setSaving(true);
     try {
-      const nameRes = await invoke<{ success: boolean }>('set_git_config', {
-        key: 'user.name',
-        value: userName.trim(),
-        global: true,
-      });
-      const emailRes = await invoke<{ success: boolean }>('set_git_config', {
-        key: 'user.email',
-        value: userEmail.trim(),
-        global: true,
-      });
+      const nameRes = await api.setGitConfig('user.name', userName.trim());
+      const emailRes = await api.setGitConfig('user.email', userEmail.trim());
       if (nameRes.success && emailRes.success) {
         setSaved(true);
       }

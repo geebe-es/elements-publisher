@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Github, Settings, Bell, Minus, Square, X } from 'lucide-react';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import {
+  isElectron,
+  isWindowMaximized,
+  minimizeWindow,
+  toggleMaximizeWindow,
+  closeWindow,
+  onWindowMaximizedChange,
+} from '../lib/windowControls';
 
 export function TitleBar({
   ghUser,
@@ -10,31 +17,27 @@ export function TitleBar({
   onSettings: () => void;
 }) {
   const [maximized, setMaximized] = useState(false);
-  const win = getCurrentWindow();
 
   useEffect(() => {
     let mounted = true;
-    win
-      .isMaximized()
+    isWindowMaximized()
       .then((m) => mounted && setMaximized(m))
       .catch(() => {});
-    const unlisten = win.onResized(async () => {
-      try {
-        setMaximized(await win.isMaximized());
-      } catch {
-        // ignora
-      }
+    const unlisten = onWindowMaximizedChange((m) => {
+      if (mounted) setMaximized(m);
     });
     return () => {
       mounted = false;
-      unlisten.then((f) => f());
+      unlisten();
     };
-  }, [win]);
+  }, []);
 
   return (
     <div
       data-tauri-drag-region
-      className="h-11 shrink-0 flex items-center justify-between pl-4 pr-0 border-b border-accent-700/20 bg-dark-950/90 select-none"
+      className={`h-11 shrink-0 flex items-center justify-between pl-4 pr-0 border-b border-accent-700/20 bg-dark-950/90 select-none ${
+        isElectron ? 'electron-drag' : ''
+      }`}
     >
       {/* Esquerda: selo Conectado */}
       <div className="flex items-center gap-2 min-w-0" data-tauri-drag-region>
@@ -84,21 +87,21 @@ export function TitleBar({
         </button>
         <div className="w-px h-5 bg-dark-700 mx-1.5" />
         <button
-          onClick={() => win.minimize()}
+          onClick={minimizeWindow}
           title="Minimizar"
           className="w-11 h-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-dark-800/80 transition-colors"
         >
           <Minus size={15} />
         </button>
         <button
-          onClick={() => win.toggleMaximize()}
+          onClick={toggleMaximizeWindow}
           title={maximized ? 'Restaurar' : 'Maximizar'}
           className="w-11 h-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-dark-800/80 transition-colors"
         >
           <Square size={maximized ? 11 : 12} fill={maximized ? 'currentColor' : 'none'} strokeWidth={maximized ? 2 : 1.8} />
         </button>
         <button
-          onClick={() => win.close()}
+          onClick={closeWindow}
           title="Fechar"
           className="w-11 h-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-500/90 transition-colors"
         >

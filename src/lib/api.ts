@@ -1,54 +1,204 @@
-import { invoke } from '@tauri-apps/api/core';
 import type { Project, ProjectStatus } from './types';
-import type { ChangesResult, FileChange, CommitResult, GitResult, CommitLog, BranchesResult } from './git_types';
+import type { GitResult, ChangesResult, CommitResult, CommitLog, BranchesResult } from './git_types';
 
-export const api = {
-  // Projetos
-  loadProjects: () => invoke<Project[]>('load_projects'),
-  saveProjects: (projects: Project[]) => invoke<boolean>('save_projects', { projects }),
-  projectStatus: (path: string) => invoke<ProjectStatus>('get_project_status', { path: path }),
-  getGitConfig: (key: string) => invoke<string>('get_git_config', { key, global: true }),
-  setGitConfig: (key: string, value: string) => invoke<GitResult>('set_git_config', { key, value, global: true }),
+/*
+ * Camada de API compartilhada entre Electron e Tauri.
+ *
+ * No Electron as chamadas vão por IPC (preload com whitelist de canais).
+ * No Tauri continuam usando `invoke`, o que permite rodar a versão antiga
+ * durante a migração sem duplicar componentes.
+ */
 
-  // Publicação
-  getChanges: (path: string) => invoke<ChangesResult>('get_changes', { path }),
-  getFileDiff: (path: string, file: string) => invoke<GitResult>('get_file_diff', { path, file }),
-  verifyIdentity: (path: string) => invoke<GitResult>('verify_identity', { path }),
-  stageFiles: (path: string, files: string[]) => invoke<GitResult>('stage_files', { path, files }),
-  commit: (path: string, message: string) => invoke<CommitResult>('commit', { path, message }),
-  push: (path: string, branch: string) => invoke<GitResult>('push', { path, branch }),
-  pull: (path: string, branch: string) => invoke<GitResult>('pull', { path, branch }),
+const isElectron = typeof window !== 'undefined' && 'electron' in window;
 
-  // Histórico / Branches
-  getHistory: (path: string, limit: number) => invoke<CommitLog[]>('get_history', { path, limit }),
-  getBranches: (path: string) => invoke<BranchesResult>('get_branches', { path }),
-  createBranch: (path: string, name: string) => invoke<GitResult>('create_branch', { path, name }),
-  switchBranch: (path: string, name: string) => invoke<GitResult>('switch_branch', { path, name }),
-  fetch: (path: string) => invoke<GitResult>('fetch', { path }),
-  listTags: (path: string) => invoke<string[]>('list_tags', { path }),
-  createTag: (path: string, name: string, message: string) => invoke<GitResult>('create_tag', { path, name, message }),
-  pushTag: (path: string, name: string) => invoke<GitResult>('push_tag', { path, name }),
-  checkGhCli: () => invoke<boolean>('check_gh_cli'),
-  ghReleaseList: (repoUrl: string) => invoke<GitResult>('gh_release_list', { repoUrl }),
-  ghCreateRelease: (repoUrl: string, tag: string, title: string, notes: string, assets: string[] = []) =>
-    invoke<GitResult>('gh_create_release', { repoUrl, tag, title, notes, assets }),
-  ghAuthStatus: () => invoke<GitResult>('gh_auth_status'),
-  ghUser: () => invoke<string>('gh_user'),
-  checkRemote: (path: string) => invoke<GitResult>('check_remote', { path }),
-  getRemoteUrl: (path: string) => invoke<GitResult>('get_remote_url', { path }),
-  setRemoteUrl: (path: string, url: string) => invoke<GitResult>('set_remote_url', { path, url }),
-  gitVersion: () => invoke<string>('get_git_version'),
+type IpcRenderer = {
+  invoke: (channel: string, ...args: unknown[]) => Promise<any>;
 };
 
-interface ReleaseInfo {
-  tag_name: string;
-  name: string | null;
-  published_at: string | null;
-  html_url: string;
-  draft: boolean;
-  prerelease: boolean;
+function ipc(): IpcRenderer {
+  return (window as any).electron.ipcRenderer as IpcRenderer;
 }
 
-export type { ReleaseInfo };
+async function tauriInvoke<T>(command: string, args?: Record<string, unknown>): Promise<T> {
+  const { invoke } = await import('@tauri-apps/api/core');
+  return await invoke<T>(command, args);
+}
 
-export type { ChangesResult, FileChange, CommitResult, GitResult, CommitLog, BranchesResult };
+export interface ReleaseInfo {
+  id: number;
+  tag_name: string;
+  name: string;
+  html_url: string;
+  published_at?: string;
+  body?: string;
+  draft?: boolean;
+  prerelease?: boolean;
+}
+
+export const api = {
+  // --- Funções de Projeto ---
+  async loadProjects(): Promise<Project[]> {
+    if (isElectron) return await ipc().invoke('projects:load');
+    return await tauriInvoke<Project[]>('load_projects');
+  },
+
+  async saveProjects(projects: Project[]): Promise<boolean> {
+    if (isElectron) return await ipc().invoke('projects:save', projects);
+    return await tauriInvoke<boolean>('save_projects', { projects });
+  },
+
+  // --- Funções Git ---
+  async checkGitInstallation(): Promise<boolean> {
+    if (isElectron) return await ipc().invoke('git:check-installation');
+    return await tauriInvoke<boolean>('check_git_installation');
+  },
+
+  async gitVersion(): Promise<string> {
+    if (isElectron) return await ipc().invoke('git:version');
+    return await tauriInvoke<string>('get_git_version');
+  },
+
+  async projectStatus(path: string): Promise<ProjectStatus> {
+    if (isElectron) return await ipc().invoke('git:project-status', path);
+    return await tauriInvoke<ProjectStatus>('get_project_status', { path });
+  },
+
+  async getChanges(path: string): Promise<ChangesResult> {
+    if (isElectron) return await ipc().invoke('git:get-changes', path);
+    return await tauriInvoke<ChangesResult>('get_changes', { path });
+  },
+
+  async getFileDiff(path: string, file: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:get-diff', path, file);
+    return await tauriInvoke<GitResult>('get_file_diff', { path, file });
+  },
+
+  async verifyIdentity(path: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:verify-identity', path);
+    return await tauriInvoke<GitResult>('verify_identity', { path });
+  },
+
+  async stageFiles(path: string, files: string[]): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:stage', path, files);
+    return await tauriInvoke<GitResult>('stage_files', { path, files });
+  },
+
+  async commit(path: string, message: string): Promise<CommitResult> {
+    if (isElectron) return await ipc().invoke('git:commit', path, message);
+    return await tauriInvoke<CommitResult>('commit', { path, message });
+  },
+
+  async push(path: string, branch: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:push', path, branch);
+    return await tauriInvoke<GitResult>('push', { path, branch });
+  },
+
+  async pull(path: string, branch: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:pull', path, branch);
+    return await tauriInvoke<GitResult>('pull', { path, branch });
+  },
+
+  async getHistory(path: string, limit: number): Promise<CommitLog[]> {
+    if (isElectron) return await ipc().invoke('git:get-history', path, limit);
+    return await tauriInvoke<CommitLog[]>('get_history', { path, limit });
+  },
+
+  async getBranches(path: string): Promise<BranchesResult> {
+    if (isElectron) return await ipc().invoke('git:get-branches', path);
+    return await tauriInvoke<BranchesResult>('get_branches', { path });
+  },
+
+  async createBranch(path: string, name: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:create-branch', path, name);
+    return await tauriInvoke<GitResult>('create_branch', { path, name });
+  },
+
+  async switchBranch(path: string, name: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:switch-branch', path, name);
+    return await tauriInvoke<GitResult>('switch_branch', { path, name });
+  },
+
+  async fetch(path: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:fetch', path);
+    return await tauriInvoke<GitResult>('fetch', { path });
+  },
+
+  async listTags(path: string): Promise<string[]> {
+    if (isElectron) return await ipc().invoke('git:list-tags', path);
+    return await tauriInvoke<string[]>('list_tags', { path });
+  },
+
+  async createTag(path: string, name: string, message: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:create-tag', path, name, message);
+    return await tauriInvoke<GitResult>('create_tag', { path, name, message });
+  },
+
+  async pushTag(path: string, name: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:push-tag', path, name);
+    return await tauriInvoke<GitResult>('push_tag', { path, name });
+  },
+
+  // --- GitHub CLI / API ---
+  async checkGhCli(): Promise<boolean> {
+    if (isElectron) return await ipc().invoke('gh:check-installation');
+    return await tauriInvoke<boolean>('check_gh_cli');
+  },
+
+  async ghAuthStatus(): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('gh:auth-status');
+    return await tauriInvoke<GitResult>('gh_auth_status');
+  },
+
+  async ghUser(): Promise<string> {
+    if (isElectron) return await ipc().invoke('gh:user');
+    return await tauriInvoke<string>('gh_user');
+  },
+
+  async checkRemote(path: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:check-remote', path);
+    return await tauriInvoke<GitResult>('check_remote', { path });
+  },
+
+  async getRemoteUrl(path: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:get-remote-url', path);
+    return await tauriInvoke<GitResult>('get_remote_url', { path });
+  },
+
+  async setRemoteUrl(path: string, url: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:set-remote-url', path, url);
+    return await tauriInvoke<GitResult>('set_remote_url', { path, url });
+  },
+
+  async ghReleaseList(repoUrl: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('gh:release-list', repoUrl);
+    return await tauriInvoke<GitResult>('gh_release_list', { repo_url: repoUrl });
+  },
+
+  async ghCreateRelease(
+    repoUrl: string,
+    tag: string,
+    title: string,
+    notes: string,
+    assets: string[] = []
+  ): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('gh:create-release', repoUrl, tag, title, notes, assets);
+    return await tauriInvoke<GitResult>('gh_create_release', {
+      repo_url: repoUrl,
+      tag,
+      title,
+      notes,
+      assets
+    });
+  },
+
+  // --- Configurações ---
+  async getGitConfig(key: string): Promise<string> {
+    if (isElectron) return await ipc().invoke('git:get-config', key, true);
+    return await tauriInvoke<string>('get_git_config', { key, global: true });
+  },
+
+  async setGitConfig(key: string, value: string): Promise<GitResult> {
+    if (isElectron) return await ipc().invoke('git:set-config', key, value, true);
+    return await tauriInvoke<GitResult>('set_git_config', { key, value, global: true });
+  }
+};

@@ -13,6 +13,7 @@ import { SettingsPage } from './pages/Settings';
 import { LogsPage } from './pages/Logs';
 import { GithubPage } from './pages/Github';
 import { api } from './lib/api';
+import { isWindowMaximized, onWindowMaximizedChange } from './lib/windowControls';
 import type { Project, ProjectWithStatus } from './lib/types';
 
 function Placeholder({ page }: { page: PageId }) {
@@ -71,17 +72,16 @@ function MainApp({ gitIdentityOk }: { gitIdentityOk: boolean }) {
   // Estado maximizado (para remover bordas arredondadas em tela cheia)
   useEffect(() => {
     let mounted = true;
-    import('@tauri-apps/api/window').then((m) => {
-      const win = m.getCurrentWindow();
-      win.isMaximized().then((mx) => mounted && setIsMax(mx)).catch(() => {});
-      const un = win.onResized(async () => {
-        try {
-          setIsMax(await win.isMaximized());
-        } catch { /* ignora */ }
-      });
-      un.then((f) => f()).catch(() => {});
-    }).catch(() => {});
-    return () => { mounted = false; };
+    isWindowMaximized()
+      .then((mx) => mounted && setIsMax(mx))
+      .catch(() => {});
+    const unlisten = onWindowMaximizedChange((mx) => {
+      if (mounted) setIsMax(mx);
+    });
+    return () => {
+      mounted = false;
+      unlisten();
+    };
   }, []);
 
   return (

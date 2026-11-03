@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { History, ExternalLink } from 'lucide-react';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { openExternal } from '../lib/openExternal';
 import { api } from '../lib/api';
 import type { Project } from '../lib/types';
 import type { CommitLog } from '../lib/git_types';
@@ -70,7 +70,7 @@ export function HistoryPage({ projects }: { projects: Project[] }) {
               </div>
               {repoUrl && (
                 <button
-                  onClick={() => openUrl(`${repoUrl}/commit/${c.hash}`)}
+                  onClick={() => openExternal(`${repoUrl}/commit/${c.hash}`)}
                   className="text-gray-500 hover:text-accent-500 transition-colors"
                   title="Abrir no GitHub"
                 >

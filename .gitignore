@@ -1,6 +1,8 @@
 # Node / Vite
 node_modules/
 dist/
+out/
+release/
 *.local
 
 # Tauri / Rust
